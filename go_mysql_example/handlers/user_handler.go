@@ -18,7 +18,9 @@ func CreateUser(c *gin.Context) {
 
 func GetUserByID(c *gin.Context) {
 	id := c.Param("id")
-	fmt.Println(id)
-
+	err := db.QueryRow("SELECT id, name FROM tags where id = ?", id).Scan(&User.ID, &User.Name)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
 	c.IndentedJSON(http.StatusNotFound, gin.H{"message": "User Not Found"})
 }
