@@ -1,19 +1,18 @@
-package main
+package db
 
 import (
 	"database/sql"
-	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func main() {
+func DB() (*sql.DB, error) {
 
-	db, err := sql.Open("mysql", "username:password@tcp(127.0.0.1:3306)/test")
+	db, err := sql.Open("mysql", "user:password@tcp(127.0.0.1:3306)/todo")
 
 	if err != nil {
 		panic(err.Error())
 	}
 
-	defer db.Close()
-
+	return db, err
 }

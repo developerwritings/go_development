@@ -1,9 +1,10 @@
-module githhub.com/developerwritings/go_development/gin_example
+module githhub.com/developerwritings/go_development/go_mysql_example
 
 go 1.20
 
 require (
 	github.com/gin-gonic/gin v1.9.0
+	github.com/go-sql-driver/mysql v1.7.1
 	github.com/spf13/viper v1.15.0
 )
 
