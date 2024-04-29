@@ -3,11 +3,7 @@ package handler
 
 import (
 	"database/sql"
-	"encoding/json"
-	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 // ProductHandler handles product-related HTTP requests

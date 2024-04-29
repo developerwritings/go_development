@@ -3,10 +3,7 @@ package handler
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
-
-	"github.com/yourusername/ecommerce-app/models"
 )
 
 type UserHandler struct {
