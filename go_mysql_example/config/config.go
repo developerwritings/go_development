@@ -1,22 +1,62 @@
+// configloader.go
 package config
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 )
 
-type Config struct {
-	Port string `json:"port"`
+type DBConfig struct {
+	Username string
+	Password string
+	Host     string
+	Port     string
+	Name     string
 }
 
-func (s *Config) NewConfig() *Config {
-	return &Config{}
+type RedisConfig struct {
+	Host     string
+	Port     string
+	Password string
 }
 
-func (s *Config) ServerConfig() *Config {
-	viper.SetConfigFile("../.env")
-	viper.ReadInConfig()
+var dbConfig DBConfig
+var redisConfig RedisConfig
 
-	s.Port = viper.GetString("PORT")
+func init() {
+	// Set the name of the config file (without extension)
+	viper.SetConfigName("config")
+	// Set the path to look for the config file
+	viper.AddConfigPath(".")
+	// Set the file extension
+	viper.SetConfigType("yaml")
 
-	return s
+	// Read the config file
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Printf("Error reading config file: %s\n", err)
+		return
+	}
+
+	// Unmarshal the database configuration into the struct
+	err = viper.UnmarshalKey("database", &dbConfig)
+	if err != nil {
+		fmt.Printf("Error unmarshaling database config: %s\n", err)
+		return
+	}
+
+	// Unmarshal the Redis configuration into the struct
+	err = viper.UnmarshalKey("redis", &redisConfig)
+	if err != nil {
+		fmt.Printf("Error unmarshaling redis config: %s\n", err)
+		return
+	}
+}
+
+func GetDBConfig() DBConfig {
+	return dbConfig
+}
+
+func GetRedisConfig() RedisConfig {
+	return redisConfig
 }
