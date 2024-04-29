@@ -1,62 +1,44 @@
-// configloader.go
+// config/config.go
 package config
 
 import (
-	"fmt"
-	"github.com/spf13/viper"
+	"io/ioutil"
+	"gopkg.in/yaml.v2"
 )
 
+// Config struct holds the application configuration
+type Config struct {
+	DB     DBConfig   `yaml:"db"`
+	Server ServerConf `yaml:"server"`
+}
+
+// DBConfig holds the database configuration
 type DBConfig struct {
-	Username string
-	Password string
-	Host     string
-	Port     string
-	Name     string
+	Driver   string `yaml:"driver"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	Database string `yaml:"database"`
 }
 
-type RedisConfig struct {
-	Host     string
-	Port     string
-	Password string
+// ServerConf holds the server configuration
+type ServerConf struct {
+	Port int `yaml:"port"`
 }
 
-var dbConfig DBConfig
-var redisConfig RedisConfig
-
-func init() {
-	// Set the name of the config file (without extension)
-	viper.SetConfigName("config")
-	// Set the path to look for the config file
-	viper.AddConfigPath(".")
-	// Set the file extension
-	viper.SetConfigType("yaml")
-
-	// Read the config file
-	err := viper.ReadInConfig()
+// LoadConfig loads the configuration from a YAML file
+func LoadConfig(filename string) (*Config, error) {
+	data, err := ioutil.ReadFile(filename)
 	if err != nil {
-		fmt.Printf("Error reading config file: %s\n", err)
-		return
+		return nil, err
 	}
 
-	// Unmarshal the database configuration into the struct
-	err = viper.UnmarshalKey("database", &dbConfig)
+	var cfg Config
+	err = yaml.Unmarshal(data, &cfg)
 	if err != nil {
-		fmt.Printf("Error unmarshaling database config: %s\n", err)
-		return
+		return nil, err
 	}
 
-	// Unmarshal the Redis configuration into the struct
-	err = viper.UnmarshalKey("redis", &redisConfig)
-	if err != nil {
-		fmt.Printf("Error unmarshaling redis config: %s\n", err)
-		return
-	}
-}
-
-func GetDBConfig() DBConfig {
-	return dbConfig
-}
-
-func GetRedisConfig() RedisConfig {
-	return redisConfig
+	return &cfg, nil
 }
